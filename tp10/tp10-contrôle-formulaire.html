@@ -20,16 +20,19 @@
         .form-group label {
             color: #333;
         }
-        .error, .success {
-            color: white;
-            background-color: red;
-            padding: 10px;
-            margin: 10px 0;
-            display: none;
-            border-radius: 5px;
+        .error-msg {
+            color: red;
+            display: none; 
+            font-size: 0.8rem;
+            margin-top: 5px;
         }
         .success {
             background-color: green;
+            color: white;
+            padding: 10px;
+            margin-top: 10px;
+            display: none;
+            border-radius: 5px;
         }
         .success-message {
             display: flex;
@@ -46,72 +49,164 @@
         }
     </style>
 </head>
-<body>
+<body onload="fetchDepartementDeFrance()">
 <div class="container">
-    <h1>Inscrivez-vous</h1>
-    <div id="error-message" class="error"></div>
-    <div class="header-image">
-        <img src="assets/luffy.png" alt="Manga Theme" style="height: 150px;">
-    </div>
+    <div id="formulaire">
+        <h1>Inscrivez-vous</h1>
+        <div class="header-image">
+            <img src="assets/luffy.png" alt="Manga Theme" style="height: 150px;">
+        </div>
 
-    <form id="registrationForm" onsubmit="event.preventDefault(); validateForm();">
-        <div class="form-group">
-            <label for="nom">Nom:</label>
-            <input type="text" class="form-control" id="nom">
-        </div>
-        <div class="form-group">
-            <label for="prenom">Prénom:</label>
-            <input type="text" class="form-control" id="prenom">
-        </div>
-        <div class="form-group">
-            <label for="dateNaissance">Date de Naissance:</label>
-            <input type="date" class="form-control" id="dateNaissance">
-        </div>
-        <input type="submit" class="btn btn-primary" value="Valider">
-    </form>
+        <form id="registrationForm" action="https://digicode.cleverapps.io/utilisateurs" method="POST" onsubmit="event.preventDefault(); validateForm();">
+            <input type="hidden" name="identite" value="$nom">
+            <div class="form-group">
+                <label for="nom">Nom de famille: (*)</label>
+                <input type="text" class="form-control" id="nom" name="nom">
+                <div id="error-nom" class="error-msg"></div>
+            </div>
+            <div class="form-group">
+                <label for="prenom">Prénom: (*)</label>
+                <input type="text" class="form-control" id="prenom" name="prenom">
+                <div id="error-prenom" class="error-msg"></div>
+            </div>
+            <div class="form-group">
+                <label for="dateNaissance">Date de Naissance: (*)</label>
+                <input type="date" class="form-control" id="dateNaissance" name="dateNaissance">
+                <div id="error-dateNaissance" class="error-msg"></div>
+            </div>
+            <div class="form-group">
+                <label for="lieuNaissance">Lieu de Naissance:</label>
+                <input type="text" class="form-control" id="lieuNaissance" name="lieuNaissance">
+                <div id="error-lieuNaissance" class="error-msg"></div>
+            </div>
+            <div class="form-group">
+                <label for="departementNaissance">Département de Naissance: (*)</label>
+                <select  class="form-control" id="departementNaissance" name="departementNaissance">
+                    <option value="">Sélectionnez un département</option>
+                </select>
+                <div id="error-departementNaissance" class="error-msg"></div>
+            </div>
+            <div class="form-group">
+                <label for="numeroRue">Numéro de rue:</label>
+                <input type="text" class="form-control" id="numeroRue" name="numeroRue">
+                <div id="error-numeroRue" class="error-msg"></div>
+            </div>
+            <div class="form-group">
+                <label for="libelleRue">Libellé de la rue:</label>
+                <input type="text" class="form-control" id="libelleRue" name="libelleRue">
+                <div id="error-libelleRue" class="error-msg"></div>
+            </div>
+            <div class="form-group">
+                <label for="codePostal">Code postal: (*)</label>
+                <input type="text" class="form-control" id="codePostal" name="codePostal">
+                <div id="error-codePostal" class="error-msg"></div>
+            </div>
+            <div class="form-group">
+                <label for="ville">Ville: (*)</label>
+                <input type="text" class="form-control" id="ville" name="ville">
+                <div id="error-ville" class="error-msg"></div>
+            </div>
+            <button type="submit" class="btn btn-primary">Valider</button>
+            <button type="reset" class="btn btn-secondary">Effacer</button>
+        </form>
+    </div>
     <div id="success-message" class="success" style="display:none;">
         <div class="success-message">
-            Le formulaire a bien été envoyé
+            <div id="success-message-text" ></div>
             <img src="assets/luffy-2.png" alt="Success">
         </div>
     </div>
 </div>
 
 <script>
+    function fetchDepartementDeFrance() {
+        fetch('https://geo.api.gouv.fr/departements')
+            .then(response => response.json())
+            .then(data => {
+                const select = document.getElementById('departementNaissance');
+                data.forEach(dept => {
+                    const option = document.createElement('option');
+                    option.value = dept.code;
+                    option.textContent = dept.nom;
+                    select.appendChild(option);
+                });
+            })
+            .catch(error => console.error('Error fetching data: ', error));
+    }
+
+    window.onload = function() {
+        fetchDepartementDeFrance();
+    };
+
     function validateForm() {
-        var nom = document.getElementById('nom').value;
-        var prenom = document.getElementById('prenom').value;
-        var dateNaissance = document.getElementById('dateNaissance').value;
-        var errorMessage = document.getElementById('error-message');
-        var successMessage = document.getElementById('success-message');
-        var form = document.getElementById('registrationForm');
+        let isValid = true;
+        document.querySelectorAll('.error-msg').forEach(e => e.style.display = 'none');
 
-        errorMessage.style.display = 'none';
-        successMessage.style.display = 'none';
+        const fields = ['nom', 'prenom', 'dateNaissance', 'departementNaissance', 'codePostal', 'ville', 'numeroRue', 'libelleRue', 'lieuNaissance'];
+        const formData = {};
 
-        if (!nom || !prenom || !dateNaissance) {
-            errorMessage.textContent = 'Tous les champs sont obligatoires.';
-            errorMessage.style.display = 'block';
-            return;
-        }
+        fields.forEach(id => {
+            const input = document.getElementById(id);
+            if (!input.value.trim()) {
+                document.getElementById('error-' + id).textContent = 'Ce champ est obligatoire.';
+                document.getElementById('error-' + id).style.display = 'block';
+                isValid = false;
+            } else {
+                formData[id] = input.value.trim();
+            }
+        });
 
-        var birthDate = new Date(dateNaissance);
-        var today = new Date();
-        var age = today.getFullYear() - birthDate.getFullYear();
-        var m = today.getMonth() - birthDate.getMonth();
-        if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
-            age--;
-        }
+        if (!isValid) return;
+
+        const birthDate = new Date(formData.dateNaissance);
+        const today = new Date();
+        let age = today.getFullYear() - birthDate.getFullYear();
+        const m = today.getMonth() - birthDate.getMonth();
+        if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) age--;
 
         if (age < 18) {
-            errorMessage.textContent = 'Vous devez avoir au moins 18 ans pour vous inscrire.';
-            errorMessage.style.display = 'block';
+            document.getElementById('error-dateNaissance').textContent = 'Vous devez avoir au moins 18 ans pour vous inscrire.';
+            document.getElementById('error-dateNaissance').style.display = 'block';
             return;
         }
+        if (!isValid) return;
 
-        form.querySelectorAll('input').forEach(input => input.disabled = true);
-        successMessage.style.display = 'block';
+        fetch('https://digicode.cleverapps.io/utilisateurs', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        })
+            .then(async response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
+                document.getElementById('success-message-text').textContent = await response.text();
+                document.getElementById('success-message').style.display = 'block';
+                document.getElementById('registrationForm').reset();
+                document.getElementById('formulaire').style.display = 'none';
+                document.querySelectorAll('input, button').forEach(input => input.disabled = true);
+
+                return response.text();
+
+            })
+            .then(data => {
+                console.log('Success:', data);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                document.getElementById('error-message').textContent = 'Erreur lors de l\'envoi du formulaire: ' + error.message;
+                document.getElementById('error-message').style.display = 'block';
+            });
+
+        event.preventDefault();
+
+
+
     }
+
 </script>
 </body>
 </html>
