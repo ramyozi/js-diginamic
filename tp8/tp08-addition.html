@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Addition de deux nombres</title>
+    <style>
+        #alert {
+            background-color: red;
+            color: white;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<h1>Calculatrice simple</h1>
+<input id="num1" type="text" placeholder="Entrez le premier nombre">
+<input id="num2" type="text" placeholder="Entrez le deuxième nombre">
+<button onclick="calculateSum()">Additionner</button>
+<div id="result">Le résultat de l'addition est : <span id="resultat"></span></div>
+<div id="alert">Vous devez saisir un nombre</div>
+
+<script>
+    function calculateSum() {
+        let num1 = document.querySelector('#num1').value;
+        let num2 = document.querySelector('#num2').value;
+        let resultElement = document.querySelector('#resultat');
+        let alertElement = document.querySelector('#alert');
+
+        alertElement.style.display = 'none';
+
+        if (isNaN(parseFloat(num1)) || isNaN(parseFloat(num2))) {
+            alertElement.style.display = 'block';
+        } else {
+            // une petite verification en plus
+            if (num1 === '' || num2 === '') {
+                resultElement.textContent = 'Veuillez saisir un nombre';
+            } else {
+                let result = parseFloat(num1) + parseFloat(num2);
+                resultElement.textContent = result.toString();
+            }
+        }
+    }
+</script>
+</body>
+</html>

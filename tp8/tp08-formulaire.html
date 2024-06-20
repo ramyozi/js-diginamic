@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Formulaire d'inscription</title>
+    <style>
+        #error {
+            background-color: red;
+            color: white;
+            display: none;
+            padding: 10px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+<h1>Formulaire d'inscription</h1>
+<form id="heroForm">
+    <label for="lastName">Nom:</label>
+    <input type="text" id="lastName" name="lastName" placeholder="Votre nom">
+    <br><br>
+    <label for="firstName">Prénom:</label>
+    <input type="text" id="firstName" name="firstName" placeholder="Votre prénom">
+    <br><br>
+    <label for="birthDate">Date de naissance:</label>
+    <input type="date" id="birthDate" name="birthDate">
+    <br><br>
+    <button type="button" onclick="validateForm()">Valider</button>
+</form>
+<div id="error"></div>
+
+<script>
+    function validateForm() {
+        let lastName = document.getElementById('lastName').value;
+        let firstName = document.getElementById('firstName').value;
+        let birthDate = document.getElementById('birthDate').value;
+        let errorMessage = document.getElementById('error');
+
+        errorMessage.style.display = 'none';
+        errorMessage.textContent = '';
+
+        if (!lastName || !firstName || !birthDate) {
+            let message = "Les champs suivants doivent être renseignés : ";
+            if (!lastName) message += "Nom, ";
+            if (!firstName) message += "Prénom, ";
+            if (!birthDate) message += "Date de naissance, ";
+            errorMessage.textContent = message.slice(0, -2) + ".";
+            errorMessage.style.display = 'block';
+        } else {
+            alert("Formulaire soumis avec succès !");
+        }
+    }
+</script>
+</body>
+</html>

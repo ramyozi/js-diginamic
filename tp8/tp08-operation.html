@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Opération Arithmétique</title>
+    <style>
+        #alert {
+            background-color: red;
+            color: white;
+            display: none; /* Cache le message d'alerte par défaut */
+            padding: 10px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+<h1>Calculatrice</h1>
+<input id="num1" type="text" placeholder="Entrez le premier nombre">
+<input id="num2" type="text" placeholder="Entrez le deuxième nombre">
+<select id="operator">
+    <option value="add">+</option>
+    <option value="subtract">-</option>
+    <option value="multiply">*</option>
+    <option value="divide">/</option>
+</select>
+<button onclick="performOperation()">Calculer</button>
+<div id="result"></div>
+<div id="alert">Vous devez saisir un nombre</div>
+
+<script>
+    function performOperation() {
+        let num1 = document.querySelector('#num1').value;
+        let num2 = document.querySelector('#num2').value;
+        let operator = document.querySelector('#operator').value;
+        let resultElement = document.querySelector('#result');
+        let alertElement = document.querySelector('#alert');
+
+        alertElement.style.display = 'none';
+        resultElement.textContent = '';
+
+        if (isNaN(parseFloat(num1)) || isNaN(parseFloat(num2))) {
+            alertElement.style.display = 'block';
+        } else {
+            let result;
+            switch (operator) {
+                case 'add':
+                    result = parseFloat(num1) + parseFloat(num2);
+                    resultElement.textContent = `Le résultat de l'addition est : ${result}`;
+                    break;
+                case 'subtract':
+                    result = parseFloat(num1) - parseFloat(num2);
+                    resultElement.textContent = `Le résultat de la soustraction est : ${result}`;
+                    break;
+                case 'multiply':
+                    result = parseFloat(num1) * parseFloat(num2);
+                    resultElement.textContent = `Le résultat de la multiplication est : ${result}`;
+                    break;
+                case 'divide':
+                    if (parseFloat(num2) === 0) {
+                        resultElement.textContent = "Erreur : Division par zéro";
+                    } else {
+                        result = parseFloat(num1) / parseFloat(num2);
+                        resultElement.textContent = `Le résultat de la division est : ${result}`;
+                    }
+                    break;
+            }
+        }
+    }
+</script>
+</body>
+</html>
