@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contrôle de Formulaire</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .error {
+            color: white;
+            background-color: red;
+            padding: 10px;
+            margin: 10px 0;
+            display: none;
+        }
+        .container {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Inscription</h1>
+    <div id="error-message" class="error"></div>
+    <form id="registrationForm">
+        <div class="form-group">
+            <label for="nom">Nom:</label>
+            <input type="text" class="form-control" id="nom">
+        </div>
+        <div class="form-group">
+            <label for="prenom">Prénom:</label>
+            <input type="text" class="form-control" id="prenom">
+        </div>
+        <div class="form-group">
+            <label for="dateNaissance">Date de Naissance:</label>
+            <input type="date" class="form-control" id="dateNaissance">
+        </div>
+        <input type="button" class="btn btn-primary" value="Valider" onclick="validateForm()">
+    </form>
+</div>
+
+<script>
+    function validateForm() {
+        var nom = document.getElementById('nom').value;
+        var prenom = document.getElementById('prenom').value;
+        var dateNaissance = document.getElementById('dateNaissance').value;
+        var errorMessage = document.getElementById('error-message');
+
+        errorMessage.style.display = 'none';
+        errorMessage.innerHTML = '';
+
+        if (!nom || !prenom || !dateNaissance) {
+            errorMessage.innerHTML = 'Tous les champs sont obligatoires.';
+            errorMessage.style.display = 'block';
+            return;
+        }
+
+        var birthDate = new Date(dateNaissance);
+        var today = new Date();
+        var age = today.getFullYear() - birthDate.getFullYear();
+        var m = today.getMonth() - birthDate.getMonth();
+        if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+            age--;
+        }
+
+        if (age < 18) {
+            errorMessage.innerHTML = 'Vous devez avoir au moins 18 ans pour vous inscrire.';
+            errorMessage.style.display = 'block';
+            return;
+        }
+
+        document.forms[0].submit();
+    }
+</script>
+</body>
+</html>
