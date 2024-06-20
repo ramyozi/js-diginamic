@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pays les plus polluants pour le CO2 (milliards de tonnes) en 2017</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        #titre {
+            text-align: center;
+            margin-top: 20px;
+        }
+        #annee {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        img.flag {
+            width: 32px;
+            height: 20px;
+        }
+        .filter-section {
+            text-align: center;
+            margin: 20px;
+        }
+        input[type="number"] {
+            margin-right: 10px;
+        }
+        .alert {
+            color: red;
+            display: none;
+        }
+    </style>
+</head>
+<body onload="populateTable()">
+<h1 id="titre"></h1>
+<h2 id="annee"></h2>
+<div class="filter-section">
+    <input type="number" id="minValue" placeholder="MIN value (milliards de tonnes)">
+    <input type="number" id="maxValue" placeholder="MAX value (milliards de tonnes)">
+    <button onclick="fetchAndFilterData()">Valider</button>
+    <div id="alert" class="alert"></div>
+</div>
+<table>
+    <thead>
+    <tr>
+        <th></th>
+        <th>Nom</th>
+        <th>Valeur</th>
+        <th>%</th>
+    </tr>
+    </thead>
+    <tbody id="corps">
+    </tbody>
+</table>
+
+<script>
+    let globalData = null;
+
+    window.onload = function() {
+        fetchAndFilterData();
+    };
+
+    function fetchAndFilterData() {
+        const minValue = document.getElementById('minValue').value || 0;
+        const maxValue = document.getElementById('maxValue').value || Number.MAX_VALUE;
+        const alertBox = document.getElementById('alert');
+
+        alertBox.style.display = 'none';
+
+        if (minValue < 0 || maxValue < 0) {
+            alertBox.textContent = 'Les valeurs doivent être positives.';
+            alertBox.style.display = 'block';
+            return;
+        }
+
+        if (Number(minValue) > Number(maxValue)) {
+            alertBox.textContent = 'Le MIN ne peut pas être supérieur au MAX.';
+            alertBox.style.display = 'block';
+            return;
+        }
+
+        if (!globalData) {
+            fetch('https://digicode.cleverapps.io/json/pays/pollution')
+                .then(response => response.json())
+                .then(data => {
+                    globalData = data;
+                    displayData(minValue, maxValue);
+                })
+                .catch(error => {
+                    console.error('Error fetching data: ', error);
+                    alertBox.textContent = 'Erreur lors de la récupération des données.';
+                    alertBox.style.display = 'block';
+                });
+        } else {
+            displayData(minValue, maxValue);
+        }
+    }
+
+    function displayData(minValue, maxValue) {
+        const tableBody = document.getElementById('corps');
+        tableBody.innerHTML = '';
+
+        const filteredData = globalData.pays.filter(pays => pays.valeur >= minValue && pays.valeur <= maxValue);
+
+        if (filteredData.length === 0) {
+            tableBody.innerHTML = `<tr><td colspan="4" style="text-align:center;">Pas de pays trouvé avec les critères spécifiés.</td></tr>`;
+        } else {
+            filteredData.forEach(pays => {
+                const row = `<tr>
+                <td><img src="https://www.flagsapi.com/${pays.code.toUpperCase()}/flat/32.png" alt="Drapeau de ${pays.nom}" class="flag"></td>
+                <td>${pays.nom}</td>
+                <td>${pays.valeur}</td>
+                <td>${pays.pourcentage}%</td>
+            </tr>`;
+                tableBody.innerHTML += row;
+            });
+        }
+    }
+</script>
+</body>
+</html>
