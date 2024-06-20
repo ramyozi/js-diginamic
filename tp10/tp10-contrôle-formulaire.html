@@ -3,26 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contrôle de Formulaire</title>
+    <title>Inscription - Thème Manga</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
-        .error {
+        body {
+            background-color: #f0f8ff;
+            font-family: 'Arial', sans-serif;
+        }
+        .container {
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+            margin-top: 50px;
+            background-color: #fff;
+        }
+        .form-group label {
+            color: #333;
+        }
+        .error, .success {
             color: white;
             background-color: red;
             padding: 10px;
             margin: 10px 0;
             display: none;
+            border-radius: 5px;
         }
-        .container {
-            margin-top: 20px;
+        .success {
+            background-color: green;
+        }
+        .success-message {
+            display: flex;
+            align-items: center;
+        }
+        .success-message img {
+            margin-left: 15px;
+            width: 50px;
+        }
+        .header-image {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
         }
     </style>
 </head>
 <body>
 <div class="container">
-    <h1>Inscription</h1>
+    <h1>Inscrivez-vous</h1>
     <div id="error-message" class="error"></div>
-    <form id="registrationForm">
+    <div class="header-image">
+        <img src="assets/luffy.png" alt="Manga Theme" style="height: 150px;">
+    </div>
+
+    <form id="registrationForm" onsubmit="event.preventDefault(); validateForm();">
         <div class="form-group">
             <label for="nom">Nom:</label>
             <input type="text" class="form-control" id="nom">
@@ -35,8 +67,14 @@
             <label for="dateNaissance">Date de Naissance:</label>
             <input type="date" class="form-control" id="dateNaissance">
         </div>
-        <input type="button" class="btn btn-primary" value="Valider" onclick="validateForm()">
+        <input type="submit" class="btn btn-primary" value="Valider">
     </form>
+    <div id="success-message" class="success" style="display:none;">
+        <div class="success-message">
+            Le formulaire a bien été envoyé
+            <img src="assets/luffy-2.png" alt="Success">
+        </div>
+    </div>
 </div>
 
 <script>
@@ -45,12 +83,14 @@
         var prenom = document.getElementById('prenom').value;
         var dateNaissance = document.getElementById('dateNaissance').value;
         var errorMessage = document.getElementById('error-message');
+        var successMessage = document.getElementById('success-message');
+        var form = document.getElementById('registrationForm');
 
         errorMessage.style.display = 'none';
-        errorMessage.innerHTML = '';
+        successMessage.style.display = 'none';
 
         if (!nom || !prenom || !dateNaissance) {
-            errorMessage.innerHTML = 'Tous les champs sont obligatoires.';
+            errorMessage.textContent = 'Tous les champs sont obligatoires.';
             errorMessage.style.display = 'block';
             return;
         }
@@ -64,12 +104,13 @@
         }
 
         if (age < 18) {
-            errorMessage.innerHTML = 'Vous devez avoir au moins 18 ans pour vous inscrire.';
+            errorMessage.textContent = 'Vous devez avoir au moins 18 ans pour vous inscrire.';
             errorMessage.style.display = 'block';
             return;
         }
 
-        document.forms[0].submit();
+        form.querySelectorAll('input').forEach(input => input.disabled = true);
+        successMessage.style.display = 'block';
     }
 </script>
 </body>
