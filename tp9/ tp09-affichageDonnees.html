@@ -26,15 +26,20 @@
     function displayCountries(countries) {
         const container = document.getElementById('countriesData');
         container.innerHTML = '';
+
+        const list = document.createElement('ol');
         countries.forEach(country => {
-            const countryInfo = `<div>
-            <h2>${country.name}</h2>
-            <p>Capitale: ${country.capital}</p>
-            <p>Population: ${country.population.toLocaleString()} habitants</p>
-            <p>Région: ${country.region}</p>
-        </div>`;
-            container.innerHTML += countryInfo;
+            const countryInfo = `<li>
+            <strong>${country.name}</strong>
+            <ul>
+                <li>Capitale: ${country.capital || 'Non spécifiée'}</li>
+                <li>Population: ${country.population.toLocaleString()} habitants</li>
+                <li>Région: ${country.region}</li>
+            </ul>
+        </li>`;
+            list.innerHTML += countryInfo;
         });
+        container.appendChild(list);
     }
 
 </script>
